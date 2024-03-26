@@ -6,7 +6,7 @@
 
 This project represents an implementation of Andrej Karpathy's  Python based [micrograd](https://github.com/karpathy/micrograd) library in the [Mojo](https://docs.modular.com/mojo) programming language.
 
-`micrograd` is a tiny scalar-valued autograd engine and a neural net library on top of it with PyTorch-like API. Don't miss to watch Andrej's excellent YouTube video [The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) for an in depth explanation of the implementation details of `micrograd`.
+`micrograd` is a tiny scalar-valued autograd engine and a neural net library on top of it with PyTorch-like API. For an in depth explanation of what it is about and it's implementation details, don't miss to watch Andrej's excellent YouTube video [The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0).
 
  `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and rough edges here.
 
