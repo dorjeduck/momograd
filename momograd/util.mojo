@@ -63,7 +63,6 @@ struct ValueList(Sized, Stringable):
     fn get_val_ptr(self, idx: Int) -> Pointer[Value]:
         return self._values + idx
 
-
 fn append_to_file(
     file_name: String, content: String, first_line_for_empty_file: String = ""
 ) raises:

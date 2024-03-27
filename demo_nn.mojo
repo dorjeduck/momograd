@@ -57,7 +57,6 @@ fn main() raises:
     var loss:Value = Value(0)
 
     # Begin training process.
-
     print("Training:\n")
     for i in range(n_epochs):   
   

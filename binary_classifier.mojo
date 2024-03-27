@@ -10,7 +10,6 @@ from momograd.engine import Value, ValueList
 from momograd.nn import Neuron, Layer, MLP
 from momograd.util import append_to_file
 
-
 def logging(txt: String, silent: Bool = False) -> None:
     if not silent:
         print(txt)
