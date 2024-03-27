@@ -52,6 +52,8 @@ The `micrograd` github repository includes a full demo of training an 2-layer ne
 
 Please take the following benchmark results with a grain of salt. We basically ignored everything mentioned in the excellent blog post by Konstantinos Krommydas, [How to Be Confident in Your Performance Benchmarking](https://www.modular.com/blog/how-to-be-confident-in-your-performance-benchmarking). Here we just measured the time the training loops took for 100 epochs and various sample size inputs for [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py) and [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo), averaged over a couple of runs, and joyfully observed how fast Mojo actually is.
 
+To ensure our Mojo version remains true to the original implementation of micrograd, we refrained from utilizing SIMD operations in our Mojo version of it. However, the idea of `momogradx`, which would incorporate such optimizations, is already taking shape in our plans.
+
 &nbsp;
 
 <div align="center">
