@@ -16,6 +16,15 @@ struct ValueList(Sized, Stringable):
         else:
             self._values = Pointer[Value].get_null()
 
+    fn __init__(inout self, *vv:Float64):
+        self._len = len(vv) 
+        if self._len > 0:
+            self._values = Pointer[Value].alloc(self._len)
+            for i in range(self._len):
+                self._values[i] = Value(vv[i])
+        else:
+            self._values = Pointer[Value].get_null()
+    
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
         if self._len > 0:

@@ -5,10 +5,10 @@ fn main() raises:
 
     # Define input (xs) 
     var xs = VariadicList[ValueList](
-        ValueList(VariadicList[Float64](2.0, 3.0, -1.0)),
-        ValueList(VariadicList[Float64](3.0, -1.0, 0.5)),
-        ValueList(VariadicList[Float64](3.0, -1.0, 0.5)),
-        ValueList(VariadicList[Float64](1.0, 1.0, -1.0)))
+        ValueList(2.0, 3.0, -1.0),
+        ValueList(3.0, -1.0, 0.5),
+        ValueList(3.0, -1.0, 0.5),
+        ValueList(1.0, 1.0, -1.0))
 
     var nin: Int = len(xs[0]) #number of input values
 
@@ -38,7 +38,7 @@ fn main() raises:
 
     # Define ground truth  
 
-    var ys = ValueList(VariadicList[Float64](1.0, -1.0, -1.0, 1.0))
+    var ys = ValueList(1.0, -1.0, -1.0, 1.0)
 
     # Setup neural network input size and output layers structure.
    

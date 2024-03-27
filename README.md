@@ -8,7 +8,7 @@ This project represents an implementation of Andrej Karpathy's  Python based [mi
 
 `micrograd` is a tiny scalar-valued autograd engine and a neural net library on top of it with PyTorch-like API. For an in depth explanation of what it is about and it's implementation details, don't miss to watch Andrej's excellent YouTube video [The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0).
 
- `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and rough edges here.
+ `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and sharp edges here.
 
 ## momograd.engine
 
@@ -50,7 +50,7 @@ See [demo_nn.mojo](https://github.com/dorjeduck/momograd/blob/main/demo_nn.mojo)
 The `micrograd` github repository includes a full demo of training an 2-layer neural network (MLP) binary classifier
 ([demo.ipynb](https://github.com/karpathy/micrograd/blob/master/demo.ipynb)). In order to be able to run basic benchmark comparisons, we include the core of it in [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py), and reimplemented it in Mojo using `momograd`: [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo).
 
-Please take the following benchmark results with a grain of salt. We basically ignored everything mentioned in the excellent blog post by Konstantinos Krommydas, [How to Be Confident in Your Performance Benchmarking](https://www.modular.com/blog/how-to-be-confident-in-your-performance-benchmarking). Here we just measured the time the training loops took for various sample size inputs for [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py) and [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo), averaged over a couple of runs, and joyfully observed how fast Mojo actually is.
+Please take the following benchmark results with a grain of salt. We basically ignored everything mentioned in the excellent blog post by Konstantinos Krommydas, [How to Be Confident in Your Performance Benchmarking](https://www.modular.com/blog/how-to-be-confident-in-your-performance-benchmarking). Here we just measured the time the training loops took for 100 epochs and various sample size inputs for [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py) and [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo), averaged over a couple of runs, and joyfully observed how fast Mojo actually is.
 
 &nbsp;
 

@@ -58,9 +58,8 @@ fn main() raises:
     var yb = InlinedFixedVector[Value](N_SAMPLES)
 
     for i in range(N_SAMPLES):
-        input[i] = ValueList(
-            VariadicList[Float64](npx[i][0].to_float64(), npx[i][1].to_float64())
-        )
+        input[i] = ValueList(npx[i][0].to_float64(), npx[i][1].to_float64())
+       
         yb[i] = 2 * Value(npy[i].to_float64()) - 1
 
     var scores = ValueList(N_SAMPLES)
