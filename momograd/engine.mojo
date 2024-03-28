@@ -1,5 +1,7 @@
+from collections.list import List 
 from math import log
 from time import now
+
 
 from .util import ValueList
 
@@ -254,7 +256,7 @@ struct Value(CollectionElement, Stringable):
     fn backward(self) raises:
 
         # topological order all of the children in the graph
-        var topo: DynamicVector[Value] = DynamicVector[Value]()
+        var topo: List[Value] = List[Value]()
         Value._build_topo(self, topo,now())
         topo.reverse()
       
@@ -266,7 +268,7 @@ struct Value(CollectionElement, Stringable):
 
     # Builds a topological order of the computation graph for the backward pass.
     @staticmethod
-    fn _build_topo(value: Value, inout topo: DynamicVector[Value],stamp:Int):
+    fn _build_topo(value: Value, inout topo: List[Value],stamp:Int):
         if value._topo_stamp.load() == stamp:
             return
         value._topo_stamp.store(stamp) # mark value as visited for this topo run

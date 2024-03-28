@@ -1,4 +1,5 @@
 from collections.vector import InlinedFixedVector
+from collections.list import List 
 
 from .engine import Value
 
@@ -16,15 +17,15 @@ struct ValueList(Sized, Stringable):
         else:
             self._values = Pointer[Value].get_null()
 
-    fn __init__(inout self, *vv:Float64):
-        self._len = len(vv) 
+    fn __init__(inout self, *vv: Float64):
+        self._len = len(vv)
         if self._len > 0:
             self._values = Pointer[Value].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
             self._values = Pointer[Value].get_null()
-    
+
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
         if self._len > 0:
@@ -34,7 +35,7 @@ struct ValueList(Sized, Stringable):
         else:
             self._values = Pointer[Value].get_null()
 
-    fn __init__(inout self, vv: DynamicVector[Float64]):
+    fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
         if self._len > 0:
             self._values = Pointer[Value].alloc(self._len)
@@ -62,6 +63,7 @@ struct ValueList(Sized, Stringable):
 
     fn get_val_ptr(self, idx: Int) -> Pointer[Value]:
         return self._values + idx
+
 
 fn append_to_file(
     file_name: String, content: String, first_line_for_empty_file: String = ""

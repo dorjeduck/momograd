@@ -10,7 +10,7 @@ This project represents an implementation of Andrej Karpathy's  Python based [mi
 
  `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and sharp edges here.
 
-### momograd.engine
+## momograd.engine
 
 The `Value` struct of `momograd.engine` represents the basic building block for the computational graph.
 
@@ -39,7 +39,7 @@ fn main() raises:
 
 See [demo_engine.mojo](https://github.com/dorjeduck/momograd/blob/main/demo_engine.mojo) for a more elaborate example.
 
-### momograd.nn
+## momograd.nn
 
 Following the implementation of `micrograd`, `momograd.nn` contains two structs for building neuronal networks, `Neuron` and `Layer`, and an implementation of a Multi-Layer Perceptron, `MLP`.
 

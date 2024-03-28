@@ -1,5 +1,7 @@
+from collections.list import List 
 from random import seed, random_float64
 from .engine import Value, ValueList
+
 
 # Define the Neuron structure with weights, bias, and activation function
 @register_passable("trivial")
@@ -40,10 +42,10 @@ struct Neuron:
 
     # Add neuron parameters to a dynamic vector for optimization
     @always_inline
-    fn add_parameters(self, inout params: DynamicVector[Pointer[Value]]) -> None:
+    fn add_parameters(self, inout params: List[Pointer[Value]]) -> None:
         for i in range(self.nin):
-            params.push_back(self.w.get_val_ptr(i))
-        params.push_back(self.b_ptr)
+            params.append(self.w.get_val_ptr(i))
+        params.append(self.b_ptr)
 
 
 # Define the Layer structure containing multiple neurons
@@ -75,7 +77,7 @@ struct Layer:
 
     # Collecting layer parameters
     @always_inline
-    fn add_parameters(self, inout params: DynamicVector[Pointer[Value]]) -> None:
+    fn add_parameters(self, inout params: List[Pointer[Value]]) -> None:
         for i in range(self.nout):
             self.neurons[i].add_parameters(params)
 
@@ -109,8 +111,8 @@ struct MLP:
         return result
 
     # Collects and returns all trainable parameters of the MLP.
-    fn parameters(self) -> DynamicVector[Pointer[Value]]:
-        var params = DynamicVector[Pointer[Value]]()
+    fn parameters(self) -> List[Pointer[Value]]:
+        var params = List[Pointer[Value]]()
 
         for i in range(self.num_layers):
             self.layers[i].add_parameters(params)
