@@ -114,8 +114,7 @@ elapsed_time = time.time() - start_time
 
 # Optionally, print the elapsed time
 if not SILENT:
-    print(f"Training completed. Total elapsed time: {
-          elapsed_time:.2f} seconds")
+    print("Training completed. Total elapsed time: {:.2f} seconds".format(elapsed_time))
 
 if BENCHMARK_CSV:
     # Open the file to append the benchmarking results
