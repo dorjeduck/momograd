@@ -35,7 +35,7 @@ for (( r=1; r<=rounds; r++ )); do
     for samples in "${sample_sizes[@]}"; do
         echo "Running binary_classifier.py with ${samples} samples for ${epochs} training epochs."
         python_output="results/benchmark_py_${stamp}.csv"
-        #python ../binary_classifier.py --epochs=$epochs --samples=$samples --silent --csv --csv_file_path=$python_output
+        python ../binary_classifier.py --epochs=$epochs --samples=$samples --silent --csv --csv_file_path=$python_output
     done
 
     echo " "
