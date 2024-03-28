@@ -2,7 +2,7 @@
 
 ![''](/imgs/momograd.jpg)
 
-### A Learning Journey: Micrograd in Mojo 🔥
+## A Learning Journey: Micrograd in Mojo 🔥
 
 This project represents an implementation of Andrej Karpathy's  Python based [micrograd](https://github.com/karpathy/micrograd) library in the [Mojo](https://docs.modular.com/mojo) programming language.
 
@@ -10,7 +10,7 @@ This project represents an implementation of Andrej Karpathy's  Python based [mi
 
  `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and sharp edges here.
 
-## momograd.engine
+### momograd.engine
 
 The `Value` struct of `momograd.engine` represents the basic building block for the computational graph.
 
@@ -45,7 +45,7 @@ Following the implementation of `micrograd`, `momograd.nn` contains two structs 
 
 See [demo_nn.mojo](https://github.com/dorjeduck/momograd/blob/main/demo_nn.mojo) for a basic example how to use these structs in Mojo.
 
-### Benchmarks
+## Benchmarks
 
 The `micrograd` github repository includes a full demo of training an 2-layer neural network (MLP) binary classifier
 ([demo.ipynb](https://github.com/karpathy/micrograd/blob/master/demo.ipynb)). In order to be able to run basic benchmark comparisons, we include the core of it in [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py), and reimplemented it in Mojo using `momograd`: [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo).
@@ -101,10 +101,10 @@ python create_charts_and_md.py
 
 This repo contains the benchmark results from my local machine for reference. You might want to delete the `./benchmarks/results` folder before running your own benchmarks.
 
-### Future
+## Future
 
-To ensure our Mojo version remains true to the original implementation of `micrograd`, we refrained from utilizing SIMD operations in our Mojo version of it. However, the idea of `momogradx`, which would incorporate such optimizations, would be an appealing next learning step.
+To ensure `momograd` remains true to the original implementation of `micrograd`, we refrained from utilizing SIMD operations etc in our Mojo version of it. However, the idea of `momogradx`, which would incorporate such optimizations, could be an appealing next learning step.
 
-### License
+## License
 
 MIT
