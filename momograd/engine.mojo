@@ -49,7 +49,7 @@ struct Value(CollectionElement, Stringable):
     fn __init__(
         inout self,
         data: Float64,
-        _prev: ValueList,
+        prev: ValueList,
         op: StringRef,
         label: StringRef = '',
     ):
@@ -62,7 +62,7 @@ struct Value(CollectionElement, Stringable):
 
         # internal variables used for autograd graph construction
         self._backward = Value.nothing_to_do
-        self._prev = _prev
+        self._prev = prev
         self._op = op
 
         # topo helper
