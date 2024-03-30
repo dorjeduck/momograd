@@ -1,5 +1,5 @@
 from collections.list import List 
-from math import log
+from math import log,exp
 from time import now
 
 
@@ -147,7 +147,7 @@ struct Value(CollectionElement, Stringable):
         var prev = ValueList(1)
         prev[0] = self
         
-        var val:Float64 = (math.exp(2*self.data_ptr.load()) - 1)/(math.exp(2*self.data_ptr.load()) + 1)
+        var val:Float64 = (exp(2*self.data_ptr.load()) - 1)/(exp(2*self.data_ptr.load()) + 1)
         
         var out = Value(val, prev, "tanh")
 
