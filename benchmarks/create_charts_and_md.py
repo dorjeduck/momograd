@@ -17,9 +17,9 @@ index = np.arange(n_groups)
 bar_width = 0.35
 
 # Plotting Py bars and text annotations
-bars_py = ax.bar(index - bar_width/2, df['time_py'], bar_width, label='micrograd', alpha=0.8)
+bars_micrograd = ax.bar(index - bar_width/2, df['time_micrograd'], bar_width, label='micrograd', alpha=0.8)
 # Plotting Mojo bars and text annotations
-bars_mojo = ax.bar(index + bar_width/2, df['time_mojo'], bar_width, label='momograd', alpha=0.8, color='orange')
+bars_momograd = ax.bar(index + bar_width/2, df['time_momograd'], bar_width, label='momograd', alpha=0.8, color='orange')
 
 # Function to add text annotations above bars with increased distance
 def add_value_labels(bars):
@@ -44,14 +44,14 @@ ax.set_xticklabels(df['n_samples'].astype(str))
 ax.set_xlim(-0.5, n_groups - 0.5)
 
 # Add value labels
-add_value_labels(bars_py)
-add_value_labels(bars_mojo)
+add_value_labels(bars_micrograd)
+add_value_labels(bars_momograd)
 
 # Place the legend in the upper left corner of the plot
 ax.legend(loc='upper left')
 
 # Adjust y-axis limit to accommodate text annotations
-ymax = df[['time_mojo', 'time_py']].max().max()  # Find the maximum value
+ymax = df[['time_momograd', 'time_micrograd']].max().max()  # Find the maximum value
 y_limit_buffer = 30  
 ax.set_ylim(0, ymax + y_limit_buffer)
 
@@ -64,7 +64,7 @@ print("Time comparison chart has been saved to 'charts/chart_time_comparison.png
 
 
 # Calculate the speedup factor for each row
-df['speedup'] = df['time_py'] / df['time_mojo']
+df['speedup'] = df['time_micrograd'] / df['time_momograd']
 
 # Create a new figure for the speedup chart
 plt.figure(figsize=(10, 6))
@@ -88,15 +88,23 @@ print("Speedup comparison chart has been saved to 'charts/chart_speedup_comparis
 
 ## markdown table
 
+
+# Calculate the speedup factor for each row
+df['speedup_micro_momo'] = df['time_micrograd'] / df['time_momograd']
+df['speedup_micro_momox'] = df['time_micrograd'] / df['time_momogradx']
+df['speedup_momo_momox'] = df['time_momograd'] / df['time_momogradx']
+
+
 # Open a Markdown file to write the table
 with open('results/benchmark_results.md', 'w') as md_file:
     # Write the table header
     md_file.write('# Benchmark Results\n\n')
-    md_file.write('| samples | micrograd (sec) | momograd (sec) | Speed Up |\n')
-    md_file.write('|---------|---------------------------|-----------------------|----------|\n')
+    md_file.write('| samples | micrograd (sec) | momograd (sec) | momograd.x (sec) | speedup micro/momo | speedup micro/momo.x | speedup momo/momo.x |\n')
+    md_file.write('| --- | --- |---| --- | --- | ---| --- |\n')
     
     # Iterate over each row in the DataFrame and write the table row
     for index, row in df.iterrows():
-        md_file.write(f"| {int(row['n_samples'])} | {row['time_py']:.2f} | {row['time_mojo']:.2f} | {row['speedup']:.1f}x |\n")
+        md_file.write(f"| {int(row['n_samples'])} | {row['time_micrograd']:.2f} | {row['time_momograd']:.2f} | {row['time_momogradx']:.2f} | {row['speedup_micro_momo']:.1f}x | {row['speedup_micro_momox']:.1f}x | {row['speedup_momo_momox']:.1f}x |\n")
 
 print("Markdown table has been written to 'results/benchmark_results.md'")
+

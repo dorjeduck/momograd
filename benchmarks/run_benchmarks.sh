@@ -26,16 +26,22 @@ for (( r=1; r<=rounds; r++ )); do
     echo "Round $r of $rounds"
     for samples in "${sample_sizes[@]}"; do
         echo "Running binary_classifier.mojo with ${samples} samples for ${epochs} training epochs."
-        mojo_output="results/benchmark_mojo_${stamp}.csv"
-        mojo ../binary_classifier.mojo $epochs $samples --silent --csv $mojo_output
+        momograd_output="results/benchmark_momograd_${stamp}.csv"
+        mojo ../binary_classifier.mojo $epochs $samples --silent --csv $momograd_output
+    done
+
+    for samples in "${sample_sizes[@]}"; do
+        echo "Running binary_classifier.mojo with ${samples} samples for ${epochs} training epochs."
+        momogradx_output="results/benchmark_momogradx_${stamp}.csv"
+        mojo ../binary_classifier_x.mojo $epochs $samples --silent --csv $momogradx_output
     done
 
     echo " "
     # Loop through the sample sizes and call the Python program with each size
     for samples in "${sample_sizes[@]}"; do
         echo "Running binary_classifier.py with ${samples} samples for ${epochs} training epochs."
-        python_output="results/benchmark_py_${stamp}.csv"
-        python ../binary_classifier.py --epochs=$epochs --samples=$samples --silent --csv --csv_file_path=$python_output
+        #micrograd_output="results/benchmark_micrograd_${stamp}.csv"
+        #python ../binary_classifier.py --epochs=$epochs --samples=$samples --silent --csv --csv_file_path=$micrograd_output
     done
 
     echo " "
