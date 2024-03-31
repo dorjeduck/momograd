@@ -10,6 +10,8 @@ This project represents an implementation of Andrej Karpathy's  Python based [mi
 
  `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and sharp edges here.
 
+ `momograd.x` ventures further into exploring Mojo's unique capabilities, focusing on optimizations such as vectorization and parallelization. This extension serves as a playground for delving into more advanced Mojo-specific enhancements, pushing beyond the original implementation logic of `micrograd` to explore how performance and efficiency can be improved within the Mojo environment.
+
 ## momograd.engine
 
 The `Value` struct of `momograd.engine` represents the basic building block for the computational graph.
@@ -45,6 +47,10 @@ Following the implementation of `micrograd`, `momograd.nn` contains two structs 
 
 See [demo_nn.mojo](https://github.com/dorjeduck/momograd/blob/main/demo_nn.mojo) for a basic example how to use these structs in Mojo.
 
+## momograd.x
+
+Playground for Mojo specific optimizations
+
 ## Benchmarks
 
 The `micrograd` github repository includes a full demo of training an 2-layer neural network (MLP) binary classifier
@@ -56,18 +62,18 @@ Please take the following benchmark results with a grain of salt. We basically i
 
 <div align="center">
 
-| samples | micrograd (sec) | momograd (sec) | Speed Up |
-|---------|---------------------------|-----------------------|----------|
-| 20 | 5.64 | 0.17 | 33.1x |
-| 40 | 18.37 | 0.33 | 55.3x |
-| 60 | 35.06 | 0.52 | 67.7x |
-| 80 | 53.93 | 0.61 | 88.1x |
-| 100 | 73.91 | 0.80 | 92.8x |
-| 120 | 94.01 | 0.94 | 100.3x |
-| 140 | 113.46 | 1.11 | 102.6x |
-| 160 | 131.64 | 1.26 | 104.7x |
-| 180 | 149.30 | 1.42 | 105.4x |
-| 200 | 168.71 | 1.70 | 99.3x |
+| samples | micrograd (sec) | momograd (sec) | momograd.x (sec) | Speed Up (micro/momo) | Speed Up (micro/momo.x) | Speed Up (momo/momo.x) |
+| --- | --- |---| --- | --- | ---| --- |
+| 20 | 5.64 | 0.15 | 0.13 | 36.6x | 44.9x | 1.2x |
+| 40 | 18.37 | 0.31 | 0.23 | 59.1x | 79.8x | 1.3x |
+| 60 | 35.06 | 0.48 | 0.35 | 72.7x | 100.1x | 1.4x |
+| 80 | 53.93 | 0.63 | 0.48 | 86.1x | 112.6x | 1.3x |
+| 100 | 73.91 | 0.82 | 0.61 | 90.5x | 122.0x | 1.3x |
+| 120 | 94.01 | 0.97 | 0.71 | 96.8x | 132.3x | 1.4x |
+| 140 | 113.46 | 1.16 | 0.84 | 97.7x | 134.4x | 1.4x |
+| 160 | 131.64 | 1.28 | 0.91 | 102.5x | 144.6x | 1.4x |
+| 180 | 149.30 | 1.46 | 1.01 | 102.6x | 148.5x | 1.4x |
+| 200 | 168.71 | 1.70 | 1.28 | 99.1x | 131.7x | 1.3x |
 
 &nbsp;
 
