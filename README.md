@@ -49,12 +49,13 @@ See [demo_nn.mojo](https://github.com/dorjeduck/momograd/blob/main/demo_nn.mojo)
 
 ## momograd.x
 
-Playground for Mojo specific optimizations
+Playground for Mojo specific optimizations.
 
 ## Benchmarks
 
 The `micrograd` github repository includes a full demo of training an 2-layer neural network (MLP) binary classifier
 ([demo.ipynb](https://github.com/karpathy/micrograd/blob/master/demo.ipynb)). In order to be able to run basic benchmark comparisons, we include the core of it in [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py), and reimplemented it in Mojo using `momograd`: [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo).
+[binary_classifier_x.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier_x.mojo) takes advantage of our experimental momograd.x package. 
 
 Please take the following benchmark results with a grain of salt. We basically ignored everything mentioned in the excellent blog post by Konstantinos Krommydas, [How to Be Confident in Your Performance Benchmarking](https://www.modular.com/blog/how-to-be-confident-in-your-performance-benchmarking). Here we just measured the time the training loops took for 100 epochs and various sample size inputs for [binary_classifier.py](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.py) and [binary_classifier.mojo](https://github.com/dorjeduck/momograd/blob/main/binary_classifier.mojo), averaged over a couple of runs, and joyfully observed how fast Mojo actually is.
 
@@ -86,10 +87,6 @@ Please take the following benchmark results with a grain of salt. We basically i
 </div>
 
 For instructions on running benchmarks, see [Benchmark Instructions](benchmarks/BENCHMARK_INSTRUCTIONS.md).
-
-## Future
-
-To ensure `momograd` remains true to the original implementation of `micrograd`, we refrained from utilizing SIMD operations etc in our Mojo version of it. However, the idea of `momogradx`, which would incorporate such optimizations, could be an appealing next learning step.
 
 ## License
 
