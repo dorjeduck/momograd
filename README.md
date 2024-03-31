@@ -63,7 +63,7 @@ Please take the following benchmark results with a grain of salt. We basically i
 
 <div align="center">
 
-| samples | micrograd (sec) | momograd (sec) | momograd.x (sec) | Speed Up (micro/momo) | Speed Up (micro/momo.x) | Speed Up (momo/momo.x) |
+| samples| micrograd (sec) | momograd (sec) | momograd.x (sec) | Speedup micro/momo | Speedup micro/momo.x | Speedup momo/momo.x |
 | --- | --- |---| --- | --- | ---| --- |
 | 20 | 5.64 | 0.15 | 0.13 | 36.6x | 44.9x | 1.2x |
 | 40 | 18.37 | 0.31 | 0.23 | 59.1x | 79.8x | 1.3x |
