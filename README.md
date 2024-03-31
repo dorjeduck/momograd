@@ -88,6 +88,15 @@ Please take the following benchmark results with a grain of salt. We basically i
 
 For instructions on running benchmarks, see [Benchmark Instructions](benchmarks/BENCHMARK_INSTRUCTIONS.md).
 
+## Changelog
+
+* 2024.03.31
+  * Introduced momograd.x: A new package focusing on Mojo-specific performance enhancements.
+  * `momograd.x` boosts `momograd` performance by 1.4x through MLP layer-level parallelization for forward pass.
+
+* 2024.03.29
+  * Initial repository setup and commit.
+
 ## License
 
 MIT
