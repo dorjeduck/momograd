@@ -78,13 +78,13 @@ struct Value(CollectionElement, Stringable):
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr.load() + other.data_ptr.load(), prev, "+")
+        var out = Value(self.data_ptr[0] + other.data_ptr[0], prev, "+")
 
         fn _backward(
             prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
-            prev[0].grad_ptr.store(prev[0].grad_ptr.load() + grad_ptr.load())
-            prev[1].grad_ptr.store(prev[1].grad_ptr.load() + grad_ptr.load())
+            prev[0].grad_ptr.store(prev[0].grad_ptr[0] + grad_ptr[0])
+            prev[1].grad_ptr.store(prev[1].grad_ptr[0] + grad_ptr[0])
 
         out._backward = _backward
 
@@ -96,16 +96,16 @@ struct Value(CollectionElement, Stringable):
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr.load() * other.data_ptr.load(), prev, "*")
+        var out = Value(self.data_ptr[0] * other.data_ptr[0], prev, "*")
 
         fn _backward(
             prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
-                prev[0].grad_ptr.load() + prev[1].data_ptr.load() * grad_ptr.load()
+                prev[0].grad_ptr[0] + prev[1].data_ptr[0] * grad_ptr[0]
             )
             prev[1].grad_ptr.store(
-                prev[1].grad_ptr.load() + prev[0].data_ptr.load() * grad_ptr.load()
+                prev[1].grad_ptr[0] + prev[0].data_ptr[0] * grad_ptr[0]
             )
 
         out._backward = _backward
@@ -118,24 +118,24 @@ struct Value(CollectionElement, Stringable):
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr.load() ** other.data_ptr.load(), prev, "**")
+        var out = Value(self.data_ptr[0] ** other.data_ptr[0], prev, "**")
 
         fn _backward(
             prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
-                prev[0].grad_ptr.load()
-                + grad_ptr.load()
+                prev[0].grad_ptr[0]
+                + grad_ptr[0]
                 * (
-                    prev[1].data_ptr.load()
-                    * prev[0].data_ptr.load() ** (prev[1].data_ptr.load() - 1)
+                    prev[1].data_ptr[0]
+                    * prev[0].data_ptr[0] ** (prev[1].data_ptr[0] - 1)
                 )
             )
             prev[1].grad_ptr.store(
-                prev[1].grad_ptr.load()
-                + grad_ptr.load()
-                * log(prev[0].data_ptr.load())
-                * (prev[0].data_ptr.load() ** prev[1].data_ptr.load())
+                prev[1].grad_ptr[0]
+                + grad_ptr[0]
+                * log(prev[0].data_ptr[0])
+                * (prev[0].data_ptr[0] ** prev[1].data_ptr[0])
             )
 
         out._backward = _backward
@@ -147,7 +147,7 @@ struct Value(CollectionElement, Stringable):
         var prev = ValueList(1)
         prev[0] = self
         
-        var val:Float64 = (exp(2*self.data_ptr.load()) - 1)/(exp(2*self.data_ptr.load()) + 1)
+        var val:Float64 = (exp(2*self.data_ptr[0]) - 1)/(exp(2*self.data_ptr[0]) + 1)
         
         var out = Value(val, prev, "tanh")
 
@@ -156,7 +156,7 @@ struct Value(CollectionElement, Stringable):
         ) -> None:
             # tanh(x) d/dx = 1 - tanh(x)^2
             prev[0].grad_ptr.store(
-                prev[0].grad_ptr.load() + (1-data_ptr.load()**2) * grad_ptr.load()
+                prev[0].grad_ptr[0] + (1-data_ptr[0]**2) * grad_ptr[0]
             )
 
         out._backward = _backward
@@ -169,7 +169,7 @@ struct Value(CollectionElement, Stringable):
         var prev = ValueList(1)
         prev[0] = self
 
-        var val: Float64 = self.data_ptr.load()
+        var val: Float64 = self.data_ptr[0]
         if val <= 0:
             val = 0
         var out = Value(val, prev, "ReLU")
@@ -177,8 +177,8 @@ struct Value(CollectionElement, Stringable):
         fn _backward(
             prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
-            if data_ptr.load() > 0:
-                prev[0].grad_ptr.store(prev[0].grad_ptr.load() + grad_ptr.load())
+            if data_ptr[0] > 0:
+                prev[0].grad_ptr.store(prev[0].grad_ptr[0] + grad_ptr[0])
 
         out._backward = _backward
 
@@ -269,9 +269,9 @@ struct Value(CollectionElement, Stringable):
     # Builds a topological order of the computation graph for the backward pass.
     @staticmethod
     fn _build_topo(value: Value, inout topo: List[Value],stamp:Int):
-        if value._topo_stamp.load() == stamp:
+        if value._topo_stamp[0] == stamp:
             return
-        value._topo_stamp.store(stamp) # mark value as visited for this topo run
+        value._topo_stamp[0] = stamp # mark value as visited for this topo run
 
         for i in range(len(value._prev)):
             Value._build_topo(value._prev[i], topo,stamp)
@@ -281,9 +281,9 @@ struct Value(CollectionElement, Stringable):
     # Returns a string representation of the Value, including data and gradient.
     fn __str__(self) -> String:
         var out = "<data: "
-            + str(self.data_ptr.load())
+            + str(self.data_ptr[0])
             + ", grad: "
-            + str(self.grad_ptr.load())
+            + str(self.grad_ptr[0])
             + ">"
         if len(self.label)>0:
             out += " (var " + str(self.label) + ") "

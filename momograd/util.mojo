@@ -48,15 +48,15 @@ struct ValueList(Sized, Stringable):
         return self._len
 
     fn __getitem__(self, idx: Int) -> Value:
-        return self._values.load(idx)
+        return self._values[idx]
 
     fn __setitem__(self, idx: Int, value: Value):
-        self._values.store(idx, value)
+        self._values[idx] = value
 
     fn __str__(self) -> String:
         if self._len == 0:
             return "empty value list"
-        var result = self._values.load(0).__str__()
+        var result = self._values[0].__str__()
         for i in range(1, self._len):
             result += "\n" + self._values[i].__str__()
         return result
