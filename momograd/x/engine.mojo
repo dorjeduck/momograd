@@ -3,20 +3,20 @@ from math import log,exp
 from time import now
 
 
-from .util import ValueList
+from .util import ValueXList
 
 # Define a value struct that can be passed through computational graph nodes
 @register_passable("trivial")
-struct Value(CollectionElement, Stringable):
+struct ValueX(CollectionElement, Stringable):
     # Pointers for the value's data and its gradient for backpropagation
     var data_ptr: Pointer[Float64]
     var grad_ptr: Pointer[Float64]
     var label: StringRef
 
     # Previous values in the computation graph, and a function pointer for the backward pass
-    var _prev: ValueList
+    var _prev: ValueXList
     var _backward: fn (
-        prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+        prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
     ) -> None
 
     # Operation identifier and a timestamp to manage computation order
@@ -26,7 +26,7 @@ struct Value(CollectionElement, Stringable):
     # A static method that does nothing, used as the default backward operation
     @staticmethod
     fn nothing_to_do(
-        prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+        prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
     ) -> None:
         pass
 
@@ -36,8 +36,8 @@ struct Value(CollectionElement, Stringable):
         self.grad_ptr = Pointer[Float64].alloc(1)
         self.grad_ptr.store(0.0)
 
-        self._prev = ValueList(0)
-        self._backward = Value.nothing_to_do
+        self._prev = ValueXList(0)
+        self._backward = ValueX.nothing_to_do
 
         self.label = label
         self._op = " "
@@ -49,7 +49,7 @@ struct Value(CollectionElement, Stringable):
     fn __init__(
         inout self,
         data: Float64,
-        prev: ValueList,
+        prev: ValueXList,
         op: StringRef,
         label: StringRef = '',
     ):
@@ -61,7 +61,7 @@ struct Value(CollectionElement, Stringable):
         self.label = label
 
         # internal variables used for autograd graph construction
-        self._backward = Value.nothing_to_do
+        self._backward = ValueX.nothing_to_do
         self._prev = prev
         self._op = op
 
@@ -73,15 +73,15 @@ struct Value(CollectionElement, Stringable):
     # Operator overloads for adding, multiplying etc, creating new Values in the graph
 
     @always_inline
-    fn __add__(self, other: Value) -> Value:
-        var prev = ValueList(2)
+    fn __add__(self, other: ValueX) -> ValueX:
+        var prev = ValueXList(2)
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr[0] + other.data_ptr[0], prev, "+")
+        var out = ValueX(self.data_ptr[0] + other.data_ptr[0], prev, "+")
 
         fn _backward(
-            prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(prev[0].grad_ptr[0] + grad_ptr[0])
             prev[1].grad_ptr.store(prev[1].grad_ptr[0] + grad_ptr[0])
@@ -91,15 +91,15 @@ struct Value(CollectionElement, Stringable):
         return out
 
     @always_inline
-    fn __mul__(self, other: Value) -> Value:
-        var prev = ValueList(2)
+    fn __mul__(self, other: ValueX) -> ValueX:
+        var prev = ValueXList(2)
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr[0] * other.data_ptr[0], prev, "*")
+        var out = ValueX(self.data_ptr[0] * other.data_ptr[0], prev, "*")
 
         fn _backward(
-            prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
                 prev[0].grad_ptr[0] + prev[1].data_ptr[0] * grad_ptr[0]
@@ -113,15 +113,15 @@ struct Value(CollectionElement, Stringable):
         return out
 
     @always_inline
-    fn __pow__(self, other: Value) -> Value:
-        var prev = ValueList(2)
+    fn __pow__(self, other: ValueX) -> ValueX:
+        var prev = ValueXList(2)
         prev[0] = self
         prev[1] = other
 
-        var out = Value(self.data_ptr[0] ** other.data_ptr[0], prev, "**")
+        var out = ValueX(self.data_ptr[0] ** other.data_ptr[0], prev, "**")
 
         fn _backward(
-            prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
                 prev[0].grad_ptr[0]
@@ -143,16 +143,16 @@ struct Value(CollectionElement, Stringable):
         return out
 
     @always_inline
-    fn tanh(self) -> Value:
-        var prev = ValueList(1)
+    fn tanh(self) -> ValueX:
+        var prev = ValueXList(1)
         prev[0] = self
         
         var val:Float64 = (exp(2*self.data_ptr[0]) - 1)/(exp(2*self.data_ptr[0]) + 1)
         
-        var out = Value(val, prev, "tanh")
+        var out = ValueX(val, prev, "tanh")
 
         fn _backward(
-            prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             # tanh(x) d/dx = 1 - tanh(x)^2
             prev[0].grad_ptr.store(
@@ -164,18 +164,18 @@ struct Value(CollectionElement, Stringable):
         return out
 
     @always_inline
-    fn relu(self) -> Value:
+    fn relu(self) -> ValueX:
 
-        var prev = ValueList(1)
+        var prev = ValueXList(1)
         prev[0] = self
 
         var val: Float64 = self.data_ptr[0]
         if val <= 0:
             val = 0
-        var out = Value(val, prev, "ReLU")
+        var out = ValueX(val, prev, "ReLU")
 
         fn _backward(
-            prev: ValueList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
         ) -> None:
             if data_ptr[0] > 0:
                 prev[0].grad_ptr[0] += grad_ptr[0]
@@ -185,79 +185,79 @@ struct Value(CollectionElement, Stringable):
         return out
 
     @always_inline
-    fn __add__(self, other: Float64) -> Value:
-        return self + Value(other)
+    fn __add__(self, other: Float64) -> ValueX:
+        return self + ValueX(other)
 
     @always_inline
-    fn __iadd__(inout self,other:Value) -> None:
-        # A new Value is created to maintain the integrity of the computational graph.
-        # The label is transferred to the new Value.      
+    fn __iadd__(inout self,other:ValueX) -> None:
+        # A new ValueX is created to maintain the integrity of the computational graph.
+        # The label is transferred to the new ValueX.      
         var label = self.label
         self.label = ''
         self = self + other  # not sure if Mojo is happy with this ;-)
         self.label = label 
     
     @always_inline
-    fn __isub__(inout self,other:Value) -> None:
-        # A new Value is created to maintain the integrity of the computational graph.
-        # The label is transferred to the new Value.
+    fn __isub__(inout self,other:ValueX) -> None:
+        # A new ValueX is created to maintain the integrity of the computational graph.
+        # The label is transferred to the new ValueX.
         var label = self.label
         self.label = ''
         self = self - other
         self.label = label
     
     @always_inline
-    fn __neg__(self) -> Value:
+    fn __neg__(self) -> ValueX:
         return self * -1
 
     @always_inline
-    fn __sub__(self, other: Float64) -> Value:
+    fn __sub__(self, other: Float64) -> ValueX:
         return self + (-other)
 
     @always_inline
-    fn __sub__(self, other: Value) -> Value:
+    fn __sub__(self, other: ValueX) -> ValueX:
         return self + (-other)
 
     @always_inline
-    fn __mul__(self, other: Float64) -> Value:
-        return self * Value(other)
+    fn __mul__(self, other: Float64) -> ValueX:
+        return self * ValueX(other)
 
     @always_inline
-    fn __truediv__(self, other: Float64) -> Value:
+    fn __truediv__(self, other: Float64) -> ValueX:
         return self * other**-1
 
     @always_inline
-    fn __truediv__(self, other: Value) -> Value:
+    fn __truediv__(self, other: ValueX) -> ValueX:
         return self * other**-1
 
     @always_inline
-    fn __pow__(self, other: Float64) -> Value:
-        return self.__pow__(Value(other))
+    fn __pow__(self, other: Float64) -> ValueX:
+        return self.__pow__(ValueX(other))
 
     # --- reverse ...
 
     @always_inline
-    fn __radd__(self, other: Float64) -> Value:
+    fn __radd__(self, other: Float64) -> ValueX:
         return self + other
 
     @always_inline
-    fn __rsub__(self, other: Float64) -> Value:
+    fn __rsub__(self, other: Float64) -> ValueX:
         return (-self) + other
 
     @always_inline
-    fn __rmul__(self, other: Float64) -> Value:
+    fn __rmul__(self, other: Float64) -> ValueX:
         return self * other
 
     @always_inline
-    fn __rtruediv__(self, other: Float64) -> Value:  # other / self
+    fn __rtruediv__(self, other: Float64) -> ValueX:  # other / self
         return other * self**-1
 
     # Performs the backward pass, computing gradients in reverse topological order.
     fn backward(self) raises:
 
         # topological order all of the children in the graph
-        var topo: List[Value] = List[Value]()
-        Value._build_topo(self, topo,now())
+        var topo: List[ValueX] = List[ValueX]()
+        ValueX._build_topo(self, topo,now())
         topo.reverse()
       
         topo[0].grad_ptr.store(1.0)
@@ -268,17 +268,17 @@ struct Value(CollectionElement, Stringable):
 
     # Builds a topological order of the computation graph for the backward pass.
     @staticmethod
-    fn _build_topo(value: Value, inout topo: List[Value],stamp:Int):
+    fn _build_topo(value: ValueX, inout topo: List[ValueX],stamp:Int):
         if value._topo_stamp[0] == stamp:
             return
         value._topo_stamp[0] = stamp # mark value as visited for this topo run
 
         for i in range(len(value._prev)):
-            Value._build_topo(value._prev[i], topo,stamp)
+            ValueX._build_topo(value._prev[i], topo,stamp)
 
         topo.append(value)
 
-    # Returns a string representation of the Value, including data and gradient.
+    # Returns a string representation of the ValueX, including data and gradient.
     fn __str__(self) -> String:
         var out = "<data: "
             + str(self.data_ptr[0])
