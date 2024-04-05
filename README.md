@@ -10,7 +10,7 @@ This project represents an implementation of Andrej Karpathy's  Python based [mi
 
  `momograd` aims to follow `micrograd's` clean implementation structure with no intention to go beyond its functionality, but to learn how things can be done in Mojo. Expect to encounter bugs and sharp edges here.
 
- `momograd.x` ventures further into exploring Mojo's unique capabilities, focusing on optimizations such as vectorization and parallelization. This extension serves as a playground for delving into more advanced Mojo-specific enhancements, pushing beyond the original implementation logic of `micrograd` to explore how performance and efficiency can be improved within the Mojo environment.
+ `momograd.x` ventures further into exploring Mojo's unique capabilities, focusing on optimizations such as vectorization and parallelization. This extension serves as a playground for delving into more advanced Mojo-specific enhancements, pushing beyond the original implementation logic of `micrograd` to explore how performance and efficiency can be improved within the Mojo sphere.
 
 ## momograd.engine
 
