@@ -5,43 +5,43 @@ from .engine import ValueX
 
 @register_passable("trivial")
 struct ValueXList(Sized, Stringable):
-    var _values: UnsafePointer[ValueX]
+    var _values: LegacyPointer[ValueX]
     var _len: Int
 
     fn __init__(inout self, length: Int = 0):
         self._len = length
         if length > 0:
-            self._values = UnsafePointer[ValueX].alloc(length)
+            self._values = LegacyPointer[ValueX].alloc(length)
             memset_zero(self._values, length)
         else:
-            self._values = UnsafePointer[ValueX]()
+            self._values = LegacyPointer[ValueX]()
 
     fn __init__(inout self, *vv: Float64):
         self._len = len(vv)
         if self._len > 0:
-            self._values = UnsafePointer[ValueX].alloc(self._len)
+            self._values = LegacyPointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX]()
+            self._values = LegacyPointer[ValueX]()
 
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = UnsafePointer[ValueX].alloc(self._len)
+            self._values = LegacyPointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX]()
+            self._values = LegacyPointer[ValueX]()
 
     fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = UnsafePointer[ValueX].alloc(self._len)
+            self._values = LegacyPointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX]()
+            self._values = LegacyPointer[ValueX]()
 
     fn __len__(self) -> Int:
         return self._len
@@ -60,7 +60,7 @@ struct ValueXList(Sized, Stringable):
             result += "\n" + self._values[i].__str__()
         return result
 
-    fn get_val_ptr(self, idx: Int) -> UnsafePointer[ValueX]:
+    fn get_val_ptr(self, idx: Int) -> LegacyPointer[ValueX]:
         return self._values + idx
 
 
