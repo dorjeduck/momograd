@@ -15,7 +15,7 @@ struct ValueList(Sized, Stringable):
             self._values = UnsafePointer[Value].alloc(length)
             memset_zero(self._values, length)
         else:
-            self._values = UnsafePointer[Value].get_null()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, *vv: Float64):
         self._len = len(vv)
@@ -24,7 +24,7 @@ struct ValueList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = UnsafePointer[Value].get_null()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
@@ -33,7 +33,7 @@ struct ValueList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = UnsafePointer[Value].get_null()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
@@ -42,7 +42,7 @@ struct ValueList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = UnsafePointer[Value].get_null()
+            self._values = UnsafePointer[Value]()
 
     fn __len__(self) -> Int:
         return self._len

@@ -14,7 +14,7 @@ struct ValueXList(Sized, Stringable):
             self._values = UnsafePointer[ValueX].alloc(length)
             memset_zero(self._values, length)
         else:
-            self._values = UnsafePointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX]()
 
     fn __init__(inout self, *vv: Float64):
         self._len = len(vv)
@@ -23,7 +23,7 @@ struct ValueXList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX]()
 
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
@@ -32,7 +32,7 @@ struct ValueXList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX]()
 
     fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
@@ -41,7 +41,7 @@ struct ValueXList(Sized, Stringable):
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = UnsafePointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX]()
 
     fn __len__(self) -> Int:
         return self._len
