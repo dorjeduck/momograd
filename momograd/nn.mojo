@@ -8,7 +8,7 @@ from .engine import Value, ValueList
 struct Neuron:
     var w: ValueList  # Weight values for the neuron
     var b: Value  # Bias value for the neuron
-    var b_ptr: Pointer[Value]  # Pointer to the bias to facilitate updates
+    var b_ptr: UnsafePointer[Value]  # UnsafePointer to the bias to facilitate updates
     var nin: Int  # Number of inputs to the neuron
     var nonlin: Bool  # Boolean flag to use a non-linear activation function
 
@@ -17,7 +17,7 @@ struct Neuron:
         self.w = ValueList(nin)
         self.b = Value(random_float64(-1, 1))
 
-        self.b_ptr = Pointer[Value].alloc(1)
+        self.b_ptr = UnsafePointer[Value].alloc(1)
         self.b_ptr.store(self.b)
 
         self.nin = nin
@@ -42,7 +42,7 @@ struct Neuron:
 
     # Add neuron parameters to a dynamic vector for optimization
     @always_inline
-    fn add_parameters(self, inout params: List[Pointer[Value]]) -> None:
+    fn add_parameters(self, inout params: List[UnsafePointer[Value]]) -> None:
         for i in range(self.nin):
             params.append(self.w.get_val_ptr(i))
         params.append(self.b_ptr)
@@ -51,7 +51,7 @@ struct Neuron:
 # Define the Layer structure containing multiple neurons
 @register_passable("trivial")
 struct Layer:
-    var neurons: Pointer[Neuron]  # Dynamic array of neurons in the layer
+    var neurons: UnsafePointer[Neuron]  # Dynamic array of neurons in the layer
     var nin: Int  # Number of inputs to the layer
     var nout: Int  # Number of outputs/neurons in the layer
 
@@ -60,7 +60,7 @@ struct Layer:
         self.nin = nin
         self.nout = nout
 
-        self.neurons = Pointer[Neuron].alloc(nout)
+        self.neurons = UnsafePointer[Neuron].alloc(nout)
 
         for i in range(nout):
             self.neurons[i] = Neuron(nin, nonlin)
@@ -77,7 +77,7 @@ struct Layer:
 
     # Collecting layer parameters
     @always_inline
-    fn add_parameters(self, inout params: List[Pointer[Value]]) -> None:
+    fn add_parameters(self, inout params: List[UnsafePointer[Value]]) -> None:
         for i in range(self.nout):
             self.neurons[i].add_parameters(params)
 
@@ -85,7 +85,7 @@ struct Layer:
 # Define of a MLP (Multi-Layer Perceptron) structure with multiple layers
 @register_passable("trivial")
 struct MLP:
-    var layers: Pointer[Layer]  # Dynamic array of layers in the MLP
+    var layers: UnsafePointer[Layer]  # Dynamic array of layers in the MLP
     var nin: Int  # Number of inputs to the MLP
     var num_layers: Int  # Total number of layers in the MLP
 
@@ -93,7 +93,7 @@ struct MLP:
     fn __init__(inout self, nin: Int, nouts: VariadicList[Int]):
         self.nin = nin
         self.num_layers = len(nouts)
-        self.layers = Pointer[Layer].alloc(self.num_layers)
+        self.layers = UnsafePointer[Layer].alloc(self.num_layers)
 
         # Initialize each layer based on the configuration
         self.layers.store(0, Layer(nin, nouts[0], True))
@@ -111,8 +111,8 @@ struct MLP:
         return result
 
     # Collects and returns all trainable parameters of the MLP.
-    fn parameters(self) -> List[Pointer[Value]]:
-        var params = List[Pointer[Value]]()
+    fn parameters(self) -> List[UnsafePointer[Value]]:
+        var params = List[UnsafePointer[Value]]()
 
         for i in range(self.num_layers):
             self.layers[i].add_parameters(params)

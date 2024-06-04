@@ -8,32 +8,32 @@ from .util import ValueXList
 # Define a value struct that can be passed through computational graph nodes
 @register_passable("trivial")
 struct ValueX(CollectionElement, Stringable):
-    # Pointers for the value's data and its gradient for backpropagation
-    var data_ptr: Pointer[Float64]
-    var grad_ptr: Pointer[Float64]
+    # UnsafePointers for the value's data and its gradient for backpropagation
+    var data_ptr: UnsafePointer[Float64]
+    var grad_ptr: UnsafePointer[Float64]
     var label: StringRef
 
     # Previous values in the computation graph, and a function pointer for the backward pass
     var _prev: ValueXList
     var _backward: fn (
-        prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+        prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
     ) -> None
 
     # Operation identifier and a timestamp to manage computation order
     var _op: StringRef
-    var _topo_stamp:Pointer[Int]
+    var _topo_stamp:UnsafePointer[Int]
 
     # A static method that does nothing, used as the default backward operation
     @staticmethod
     fn nothing_to_do(
-        prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+        prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
     ) -> None:
         pass
 
     fn __init__(inout self, data: Float64, label: StringRef = ""):
-        self.data_ptr = Pointer[Float64].alloc(1)
+        self.data_ptr = UnsafePointer[Float64].alloc(1)
         self.data_ptr.store(data)
-        self.grad_ptr = Pointer[Float64].alloc(1)
+        self.grad_ptr = UnsafePointer[Float64].alloc(1)
         self.grad_ptr.store(0.0)
 
         self._prev = ValueXList(0)
@@ -43,7 +43,7 @@ struct ValueX(CollectionElement, Stringable):
         self._op = " "
 
         # topo helper
-        self._topo_stamp = Pointer[Int]().alloc(1)
+        self._topo_stamp = UnsafePointer[Int]().alloc(1)
         self._topo_stamp.store(0)
 
     fn __init__(
@@ -53,9 +53,9 @@ struct ValueX(CollectionElement, Stringable):
         op: StringRef,
         label: StringRef = '',
     ):
-        self.data_ptr = Pointer[Float64].alloc(1)
+        self.data_ptr = UnsafePointer[Float64].alloc(1)
         self.data_ptr.store(data)
-        self.grad_ptr = Pointer[Float64].alloc(1)
+        self.grad_ptr = UnsafePointer[Float64].alloc(1)
         self.grad_ptr.store(0.0)
 
         self.label = label
@@ -66,7 +66,7 @@ struct ValueX(CollectionElement, Stringable):
         self._op = op
 
         # topo helper
-        self._topo_stamp = Pointer[Int]().alloc(1)
+        self._topo_stamp = UnsafePointer[Int]().alloc(1)
         self._topo_stamp.store(0)
 
     
@@ -81,7 +81,7 @@ struct ValueX(CollectionElement, Stringable):
         var out = ValueX(self.data_ptr[0] + other.data_ptr[0], prev, "+")
 
         fn _backward(
-            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(prev[0].grad_ptr[0] + grad_ptr[0])
             prev[1].grad_ptr.store(prev[1].grad_ptr[0] + grad_ptr[0])
@@ -99,7 +99,7 @@ struct ValueX(CollectionElement, Stringable):
         var out = ValueX(self.data_ptr[0] * other.data_ptr[0], prev, "*")
 
         fn _backward(
-            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
                 prev[0].grad_ptr[0] + prev[1].data_ptr[0] * grad_ptr[0]
@@ -121,7 +121,7 @@ struct ValueX(CollectionElement, Stringable):
         var out = ValueX(self.data_ptr[0] ** other.data_ptr[0], prev, "**")
 
         fn _backward(
-            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
         ) -> None:
             prev[0].grad_ptr.store(
                 prev[0].grad_ptr[0]
@@ -152,7 +152,7 @@ struct ValueX(CollectionElement, Stringable):
         var out = ValueX(val, prev, "tanh")
 
         fn _backward(
-            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
         ) -> None:
             # tanh(x) d/dx = 1 - tanh(x)^2
             prev[0].grad_ptr.store(
@@ -175,7 +175,7 @@ struct ValueX(CollectionElement, Stringable):
         var out = ValueX(val, prev, "ReLU")
 
         fn _backward(
-            prev: ValueXList, grad_ptr: Pointer[Float64], data_ptr: Pointer[Float64]
+            prev: ValueXList, grad_ptr: UnsafePointer[Float64], data_ptr: UnsafePointer[Float64]
         ) -> None:
             if data_ptr[0] > 0:
                 prev[0].grad_ptr[0] += grad_ptr[0]

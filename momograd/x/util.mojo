@@ -5,43 +5,43 @@ from .engine import ValueX
 
 @register_passable("trivial")
 struct ValueXList(Sized, Stringable):
-    var _values: Pointer[ValueX]
+    var _values: UnsafePointer[ValueX]
     var _len: Int
 
     fn __init__(inout self, length: Int = 0):
         self._len = length
         if length > 0:
-            self._values = Pointer[ValueX].alloc(length)
+            self._values = UnsafePointer[ValueX].alloc(length)
             memset_zero(self._values, length)
         else:
-            self._values = Pointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX].get_null()
 
     fn __init__(inout self, *vv: Float64):
         self._len = len(vv)
         if self._len > 0:
-            self._values = Pointer[ValueX].alloc(self._len)
+            self._values = UnsafePointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = Pointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX].get_null()
 
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = Pointer[ValueX].alloc(self._len)
+            self._values = UnsafePointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = Pointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX].get_null()
 
     fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = Pointer[ValueX].alloc(self._len)
+            self._values = UnsafePointer[ValueX].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = ValueX(vv[i])
         else:
-            self._values = Pointer[ValueX].get_null()
+            self._values = UnsafePointer[ValueX].get_null()
 
     fn __len__(self) -> Int:
         return self._len
@@ -60,7 +60,7 @@ struct ValueXList(Sized, Stringable):
             result += "\n" + self._values[i].__str__()
         return result
 
-    fn get_val_ptr(self, idx: Int) -> Pointer[ValueX]:
+    fn get_val_ptr(self, idx: Int) -> UnsafePointer[ValueX]:
         return self._values + idx
 
 
