@@ -129,10 +129,10 @@ fn main() raises:
             CSV_FILE_PATH,
             str(N_SAMPLES)
             + ","
-            + N_EPOCHS
+            + str(N_EPOCHS)
             + ","
-            + elapsed_time / 1000000000
+            + str(elapsed_time / 1000000000)
             + ","
-            + accuracy,
+            + str(accuracy),
             "n_samples,n_epochs,time,accuracy",
         )
