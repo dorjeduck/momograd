@@ -90,6 +90,8 @@ For instructions on running benchmarks, see [Benchmark Instructions](benchmarks/
 
 ## Changelog
 
+* 2024.06.07
+  * Updated to Mojo 24.4
 * 2024.03.31
   * Introduced momograd.x: A new package focusing on Mojo-specific performance enhancements.
   * `momograd.x` boosts `momograd` performance by 1.4x through MLP layer-level parallelization for forward pass.
