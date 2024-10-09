@@ -10,7 +10,7 @@ from algorithm import parallelize
 struct NeuronX:
     var w: ValueXList  # Weight values for the neuron
     var b: ValueX  # Bias value for the neuron
-    var b_ptr: LegacyPointer[ValueX]  # LegacyPointer to the bias to facilitate updates
+    var b_ptr: UnsafePointer[ValueX]  # UnsafePointer to the bias to facilitate updates
     var nin: Int  # Number of inputs to the neuron
     var nonlin: Bool  # Boolean flag to use a non-linear activation function
 
@@ -19,8 +19,8 @@ struct NeuronX:
         self.w = ValueXList(nin)
         self.b = ValueX(random_float64(-1, 1))
 
-        self.b_ptr = LegacyPointer[ValueX].alloc(1)
-        self.b_ptr.store(self.b)
+        self.b_ptr = UnsafePointer[ValueX].alloc(1)
+        self.b_ptr[0] = self.b
 
         self.nin = nin
         self.nonlin = nonlin
@@ -44,7 +44,7 @@ struct NeuronX:
 
     # Add neuron parameters to a dynamic vector for optimization
     @always_inline
-    fn add_parameters(self, inout params: List[LegacyPointer[ValueX]]) -> None:
+    fn add_parameters(self, inout params: List[UnsafePointer[ValueX]]) -> None:
         for i in range(self.nin):
             params.append(self.w.get_val_ptr(i))
         params.append(self.b_ptr)
@@ -53,7 +53,7 @@ struct NeuronX:
 # Define the LayerX structure containing multiple neurons
 @register_passable("trivial")
 struct LayerX:
-    var neurons: LegacyPointer[NeuronX]  # Dynamic array of neurons in the layer
+    var neurons: UnsafePointer[NeuronX]  # Dynamic array of neurons in the layer
     var nin: Int  # Number of inputs to the layer
     var nout: Int  # Number of outputs/neurons in the layer
 
@@ -62,7 +62,7 @@ struct LayerX:
         self.nin = nin
         self.nout = nout
 
-        self.neurons = LegacyPointer[NeuronX].alloc(nout)
+        self.neurons = UnsafePointer[NeuronX].alloc(nout)
 
         for i in range(nout):
             self.neurons[i] = NeuronX(nin, nonlin)
@@ -81,7 +81,7 @@ struct LayerX:
 
     # Collecting layer parameters
     @always_inline
-    fn add_parameters(self, inout params: List[LegacyPointer[ValueX]]) -> None:
+    fn add_parameters(self, inout params: List[UnsafePointer[ValueX]]) -> None:
         for i in range(self.nout):
             self.neurons[i].add_parameters(params)
 
@@ -89,7 +89,7 @@ struct LayerX:
 # Define of a MLPX (Multi-LayerX Perceptron) structure with multiple layers
 @register_passable("trivial")
 struct MLPX:
-    var layers: LegacyPointer[LayerX]  # Dynamic array of layers in the MLPX
+    var layers: UnsafePointer[LayerX]  # Dynamic array of layers in the MLPX
     var nin: Int  # Number of inputs to the MLPX
     var num_layers: Int  # Total number of layers in the MLPX
 
@@ -97,13 +97,13 @@ struct MLPX:
     fn __init__(inout self, nin: Int, nouts: VariadicList[Int]):
         self.nin = nin
         self.num_layers = len(nouts)
-        self.layers = LegacyPointer[LayerX].alloc(self.num_layers)
+        self.layers = UnsafePointer[LayerX].alloc(self.num_layers)
 
         # Initialize each layer based on the configuration
-        self.layers.store(0, LayerX(nin, nouts[0], True))
+        self.layers[0] =  LayerX(nin, nouts[0], True)
 
         for i in range(1, self.num_layers):
-            self.layers.store(i, LayerX(nouts[i - 1], nouts[i], i < self.num_layers - 1))
+            self.layers[i] =  LayerX(nouts[i - 1], nouts[i], i < self.num_layers - 1)
 
     # Define how the MLPX processes input values through its layers
     fn __call__(self, input: ValueXList) -> ValueXList:
@@ -115,8 +115,8 @@ struct MLPX:
         return result
 
     # Collects and returns all trainable parameters of the MLPX.
-    fn parameters(self) -> List[LegacyPointer[ValueX]]:
-        var params = List[LegacyPointer[ValueX]]()
+    fn parameters(self) -> List[UnsafePointer[ValueX]]:
+        var params = List[UnsafePointer[ValueX]]()
 
         for i in range(self.num_layers):
             self.layers[i].add_parameters(params)

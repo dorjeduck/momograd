@@ -1,5 +1,4 @@
-from python import Python
-from python.object import PythonObject
+from python import Python, PythonObject
 from time import now
 
 from random import seed
@@ -90,7 +89,7 @@ fn main() raises:
 
         reg_loss = ValueX(0)
         for i in range(len(params)):
-            reg_loss += params[i].load() * params[i].load()
+            reg_loss += params[i][0] * params[i][0]
 
         var total_loss = 1e-4 * reg_loss + data_loss
 
@@ -108,7 +107,7 @@ fn main() raises:
 
         # Zero gradients before backpropagation.
         for i in range(len(params)):
-            params[i].load().grad_ptr.store(0.0)
+            params[i][0].grad_ptr.store(0.0)
 
         # Backward pass: Compute gradients.
         total_loss.backward()
@@ -116,10 +115,10 @@ fn main() raises:
         learning_rate = 1.0 - 0.9 * epoch / 100
         # Parameter update: Apply gradient descent.
         for i in range(len(params)):
-            if params[i].load().grad_ptr.load() != 0.0:
-                params[i].load().data_ptr.store(
-                    params[i].load().data_ptr.load()
-                    - learning_rate * params[i].load().grad_ptr.load()
+            if params[i][0].grad_ptr.load() != 0.0:
+                params[i][0].data_ptr.store(
+                    params[i][0].data_ptr.load()
+                    - learning_rate * params[i][0].grad_ptr.load()
                 )
 
     var elapsed_time = now() - start_time

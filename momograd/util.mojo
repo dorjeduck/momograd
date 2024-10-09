@@ -1,48 +1,49 @@
 from collections.vector import InlinedFixedVector
 from collections.list import List 
+from memory import memset_zero
 
 from .engine import Value
 
 
 @register_passable("trivial")
 struct ValueList(Sized, Stringable):
-    var _values: LegacyPointer[Value]
+    var _values: UnsafePointer[Value]
     var _len: Int
 
     fn __init__(inout self, length: Int = 0):
         self._len = length
         if length > 0:
-            self._values = LegacyPointer[Value].alloc(length)
+            self._values = UnsafePointer[Value].alloc(length)
             memset_zero(self._values, length)
         else:
-            self._values = LegacyPointer[Value]()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, *vv: Float64):
         self._len = len(vv)
         if self._len > 0:
-            self._values = LegacyPointer[Value].alloc(self._len)
+            self._values = UnsafePointer[Value].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = LegacyPointer[Value]()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, vv: VariadicList[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = LegacyPointer[Value].alloc(self._len)
+            self._values = UnsafePointer[Value].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = LegacyPointer[Value]()
+            self._values = UnsafePointer[Value]()
 
     fn __init__(inout self, vv: List[Float64]):
         self._len = len(vv)
         if self._len > 0:
-            self._values = LegacyPointer[Value].alloc(self._len)
+            self._values = UnsafePointer[Value].alloc(self._len)
             for i in range(self._len):
                 self._values[i] = Value(vv[i])
         else:
-            self._values = LegacyPointer[Value]()
+            self._values = UnsafePointer[Value]()
 
     fn __len__(self) -> Int:
         return self._len
@@ -61,7 +62,7 @@ struct ValueList(Sized, Stringable):
             result += "\n" + self._values[i].__str__()
         return result
 
-    fn get_val_ptr(self, idx: Int) -> LegacyPointer[Value]:
+    fn get_val_ptr(self, idx: Int) -> UnsafePointer[Value]:
         return self._values + idx
 
 

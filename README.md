@@ -90,6 +90,8 @@ For instructions on running benchmarks, see [Benchmark Instructions](benchmarks/
 
 ## Changelog
 
+* 2024.10.9
+  * Updated to Mojo 24.5
 * 2024.06.07
   * Updated to Mojo 24.4
 * 2024.03.31

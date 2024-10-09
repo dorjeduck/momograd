@@ -29,9 +29,9 @@ fn main() raises:
    
     g.backward()
 
-    print(g)
-    print(a)
-    print(b)
+    print(g.__str__())
+    print(a.__str__())
+    print(b.__str__())
 
     # print the computational graph ...
     g.print_branch()

@@ -19,7 +19,7 @@ fn main() raises:
     var nr:NeuronX = NeuronX(nin)
 
     print("Output single NeuronX:")
-    print(nr(xs[0]))
+    print(nr(xs[0]).__str__())
 
     ################
     # Single LayerX #
@@ -28,7 +28,7 @@ fn main() raises:
     var ly:LayerX = LayerX(nin,5)
     
     print("\nOutput single LayerX:")
-    print(ly(xs[0]))
+    print(ly(xs[0]).__str__())
 
     ############
     # Demo MLPX #
@@ -74,15 +74,15 @@ fn main() raises:
 
         # Zero gradients before backpropagation.
         for i in range(len(params)):   
-            params[i].load().grad_ptr.store(0.0)
+            params[i][0].grad_ptr.store(0.0)
 
         # Backward pass: Compute gradients.
         loss.backward()
 
         # Parameter update: Apply gradient descent.
         for i in range(len(params)):
-            if params[i].load().grad_ptr.load() != 0.0:
-                params[i].load().data_ptr.store(params[i].load().data_ptr.load() - learning_rate * params[i].load().grad_ptr.load())
+            if params[i][0].grad_ptr.load() != 0.0:
+                params[i][0].data_ptr.store(params[i][0].data_ptr.load() - learning_rate * params[i][0].grad_ptr.load())
 
         
     # Display prediction and corresponding ground truth values.

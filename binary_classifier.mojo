@@ -1,5 +1,4 @@
-from python import Python
-from python.object import PythonObject
+from python import Python, PythonObject
 from time import now
 
 from random import seed
@@ -82,7 +81,7 @@ fn main() raises:
         # svm "max-margin" loss
         for i in range(N_SAMPLES):
             data_loss += (1 - scores[i] * yb[i]).relu()
-            if (scores[i].data_ptr.load() > 0) == (yb[i].data_ptr.load() > 0):
+            if (scores[i].data_ptr[0] > 0) == (yb[i].data_ptr[0] > 0):
                 accuracy += 1
 
         accuracy /= N_SAMPLES
@@ -90,7 +89,7 @@ fn main() raises:
 
         reg_loss = Value(0)
         for i in range(len(params)):
-            reg_loss += params[i].load() * params[i].load()
+            reg_loss += params[i][0] * params[i][0]
 
         var total_loss = 1e-4 * reg_loss + data_loss
 
@@ -99,7 +98,7 @@ fn main() raises:
             "Epoch "
             + str(epoch)
             + ": loss = "
-            + str(total_loss.data_ptr.load())
+            + str(total_loss.data_ptr[0])
             + " (accuracy:"
             + str(accuracy * 100)
             + "%)",
@@ -108,7 +107,7 @@ fn main() raises:
 
         # Zero gradients before backpropagation.
         for i in range(len(params)):
-            params[i].load().grad_ptr.store(0.0)
+            params[i][0].grad_ptr.store(0.0)
 
         # Backward pass: Compute gradients.
         total_loss.backward()
@@ -116,10 +115,10 @@ fn main() raises:
         learning_rate = 1.0 - 0.9 * epoch / 100
         # Parameter update: Apply gradient descent.
         for i in range(len(params)):
-            if params[i].load().grad_ptr.load() != 0.0:
-                params[i].load().data_ptr.store(
-                    params[i].load().data_ptr.load()
-                    - learning_rate * params[i].load().grad_ptr.load()
+            if params[i][0].grad_ptr[0] != 0.0:
+                params[i][0].data_ptr.store(
+                    params[i][0].data_ptr[0]
+                    - learning_rate * params[i][0].grad_ptr[0]
                 )
 
     var elapsed_time = now() - start_time
